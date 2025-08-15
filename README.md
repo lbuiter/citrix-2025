@@ -1,3 +1,34 @@
+## Addendum: Portal/UI triage, config auditing and live-host improvements
+
+This fork adds targeted triage for NetScaler portal/UI directories and configuration, focused on catching exfiltration, tiny backdoors, and persistence commonly abused during intrusions.
+
+- **disk-image-checks (Python)**
+  - New checks: `recent_changes`, `tiny_backdoor`, and `ns_conf`.
+  - Expanded `suspicious_content` with:
+    - `portal_exfil`: HTML/JS external loads, exfil APIs, and redirects
+    - `portal_strings`: `strings.*.json` external URL scanning
+    - `portal_plugins`: `plugins*.xml` external `src` references
+  - Per-check extension filters, allowlists for common CDNs/IdPs, UTF‑8 decode with errors ignored, path existence guards, symlink skipping, and de‑duplication of overlapping hits.
+  - Broader PHP-family coverage for webshell/tiny file heuristics.
+  - Crontab scanner falls back to per‑user spool dirs when API isn’t available.
+
+- **checks.yaml (IOC configuration)**
+  - Portal paths: `/var/netscaler/logon`, `/var/netscaler/logon/LogonPoint`, `/var/netscaler/logon/themes`, `/var/vpn`.
+  - `recent_changes` and `tiny_backdoor` include the full PHP family plus relevant UI extensions (html/xhtml/js/json/css).
+  - `ns_conf` patterns to surface non‑default portal themes, external theme sources, responder redirects/injections, and risky parameters; with allowlists for common IdPs.
+
+- **live-host-bash-check**
+  - RC persistence sweep across multiple rc files and `/etc/rc.d`.
+  - Portal triage loop (incl. `/netscaler/ns_gui/vpn`) for recent changes, exfil patterns, tiny shells, PHP open tags, plugin XML `src`, and theme strings URLs.
+
+### Important notes and disclaimers
+- These additions are intended for incident triage and may produce false positives; tune allowlists for your environment.
+- Findings indicate potential compromise; they are not proof. Follow vendor guidance and perform full forensics as needed.
+- NetScaler’s NSPPE request logs are not exported to disk by default; do not expect rich request traces under `/var`. Where present, still scan rotated `ns.log*` under `/var`. Absence of logs does not imply absence of intrusion.
+- Logs may contain local paths or URLs. Review before sharing; avoid posting publicly.
+- Use at your own risk. This addendum does not change the original project’s disclaimer below.
+
+
 # Detection Script for Citrix NetScaler appliances
 ## Author: NCSC-NL
 
