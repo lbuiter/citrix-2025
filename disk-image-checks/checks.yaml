@@ -55,11 +55,11 @@ checks:
         - name: portal_exfil
           suspicious_contents:
             # Loosen heads to also allow data: and blob: (no // for data:) and ports on host
-            - regex:<script[^>]+src=["'](https?|data|blob):
-            - regex:fetch\(\s*["'](https?|data|blob):
+            - 'regex:<script[^>]+src=["''](https?|data|blob):'
+            - 'regex:fetch\(\s*["''](https?|data|blob):'
             - regex:(?s)xmlhttprequest.*?open\([^,]+,\s*["']https?://
             - regex:sendbeacon\(\s*["']https?://
-            - regex:new\s+image\(\)\.src\s*=\s*["'](https?|data|blob):
+            - 'regex:new\s+image\(\)\.src\s*=\s*["''](https?|data|blob):'
             - regex:on\w+\s*=\s*.*location\.(href|assign)\s*=["']https?://
             - postMessage\(
             - regex:location\.(href|assign)\s*=
