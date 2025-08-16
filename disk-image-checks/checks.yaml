@@ -61,14 +61,23 @@ checks:
             - regex:sendbeacon\(\s*["']https?://
             - 'regex:new\s+image\(\)\.src\s*=\s*["''](https?|data|blob):'
             - regex:on\w+\s*=\s*.*location\.(href|assign)\s*=["']https?://
-            - postMessage\(
+            - regex:postMessage\(
             - regex:location\.(href|assign)\s*=
             - regex:window\.location\s*=
+            - regex:new\s+WebSocket\(\s*["']wss?://
+            - regex:new\s+EventSource\(\s*["']https?://
+            - regex:navigator\.sendbeacon\(\s*["']https?://
+            - regex:navigator\.clipboard\.write(Text)?\(
+            - 'regex:fetch\(\s*`https?://'
+            - 'regex:(?s)xmlhttprequest.*?open\([^,]+,\s*`https?://'
           paths:
             - /var/netscaler/logon
             - /var/netscaler/logon/LogonPoint
             - /var/netscaler/logon/themes
             - /var/vpn
+            - /var/netscaler/portal
+            - /netscaler/ns_gui/admin_ui
+            - /netscaler/ns_gui/vpn
           known_paths: []
           extensions:
             - .html
@@ -206,6 +215,9 @@ checks:
         - /var/netscaler/logon/LogonPoint
         - /var/netscaler/logon/themes
         - /var/vpn
+        - /var/netscaler/portal
+        - /netscaler/ns_gui/admin_ui
+        - /netscaler/ns_gui/vpn
       days: 90
       extensions:
         - .php
@@ -231,6 +243,9 @@ checks:
         - /var/netscaler/logon/LogonPoint
         - /var/netscaler/logon/themes
         - /var/vpn
+        - /var/netscaler/portal
+        - /netscaler/ns_gui/admin_ui
+        - /netscaler/ns_gui/vpn
       max_size_kb: 64
       extensions:
         - .php
@@ -343,6 +358,12 @@ checks:
         - regex:(?s)add\s+responder\s+action\s+.*?Q\("https?://
         # Clientless/non-default portal modes
         - regex:set\s+vpn\s+parameter\s+.*-clientlessVpnMode\s+ON
+        # Additional rewrite/AAA pivots and toggles often abused
+        - regex:add\s+rewrite\s+(policy|action)\s+.*https?://
+        - regex:bind\s+rewrite\s+policylabel\s+\S+.*-\s*policyName\s+\S+
+        - regex:set\s+vpn\s+parameter\s+.*-forceCleanup\s+ON
+        - regex:set\s+vpn\s+vserver\s+\S+.*-clientlessAccess\s+ON
+        - regex:add\s+(lb|cs)\s+vserver\s+\S+.*-redirURL\s+https?://
       allowlist_patterns:
         # Common IdP endpoints likely present in SSO flows
         - regex:https?://login\.microsoftonline\.com
