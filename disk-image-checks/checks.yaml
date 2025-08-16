@@ -64,6 +64,8 @@ checks:
             - regex:postMessage\(
             - regex:location\.(href|assign)\s*=
             - regex:window\.location\s*=
+            - regex:(?:window|parent|top)\.location\s*=
+            - regex:(?:window|parent|top)\.location\.(href|assign)\s*=
             - regex:new\s+WebSocket\(\s*["']wss?://
             - regex:new\s+EventSource\(\s*["']https?://
             - regex:navigator\.sendbeacon\(\s*["']https?://
